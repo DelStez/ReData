@@ -21,36 +21,80 @@ namespace ReData
             InitializeComponent();
         }
 
-
-        private void SetNewCreationData(DateTime dateTime, string path)
+        private void SetNewValuesInmMetaData(string path)
         {
-            dateTimePicker2.Value = dateTime;
-            File.SetCreationTime(path, dateTime);
-            MessageBox.Show("Date was changed!");
+            string logMessage = string.Empty;
+            DateTime newDate;
+            int valMode = -1;
+            if (oldValCreate.Value.CompareTo(newValCreate.Value) != 0)
+            {
+                newDate = newValCreate.Value;
+                oldValCreate.Value = newDate;
+                File.SetCreationTime(path, newDate);
+                logMessage +="Date of create  was changed!\n";
+            }
+            if (oldValChange.Value.CompareTo(newValChange.Value) != 0)
+            {
+                newDate = newValChange.Value;
+                oldValChange.Value = newDate;
+                File.SetLastWriteTime(path, newDate);
+                logMessage += "Date of change  was changed!\n";
+            }
+            if (oldValOpen.Value.CompareTo(newValOpen.Value) != 0)
+            {
+                newDate = newValOpen.Value;
+                oldValOpen.Value = newDate;
+                File.SetLastAccessTime(path, newDate);
+                logMessage += "Date of open  was changed!\n";
+            }
+            //change attributes
+            
+
         }
 
-        private void ShowOldTime(string file)
+        private void ShowOldValues(string file)
         {
             var ty = File.Exists(file);
             FileSystemInfo fileSystemInfo = new FileInfo(file);
             fileSystemInfo.Refresh(); 
-            var creationTime = fileSystemInfo.CreationTime.Date;
-            dateTimePicker2.Value = creationTime;
+            //show time of last CCA (CreateChangeAccess)
+            var time = fileSystemInfo.CreationTime.Date;
+            oldValCreate.Value = time;
+            newValCreate.Value = time;
+            time = fileSystemInfo.LastWriteTime.Date;
+            oldValChange.Value = time;
+            newValChange.Value = time;
+            time = fileSystemInfo.LastAccessTime.Date;
+            oldValOpen.Value = time;
+            newValOpen.Value = time;
+            // show attributes
+            FileAttributes attributes = File.GetAttributes(path);
+            
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 path = openFileDialog1.FileName;
                 textBox1.Text = path;
-                ShowOldTime(openFileDialog1.FileName);
+                ShowOldValues(path);
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            DateTime newDate = dateTimePicker1.Value;
-            SetNewCreationData(newDate, path);
+            SetNewValuesInmMetaData(path);
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
