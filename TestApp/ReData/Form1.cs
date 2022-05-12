@@ -15,28 +15,24 @@ namespace ReData
 
         private void SetNewValuesInmMetaData(string path)
         {
-            string logMessage = string.Empty;
             DateTime newDate;
             if (oldValCreate.Value.CompareTo(newValCreate.Value) != 0)
             {
                 newDate = newValCreate.Value;
                 oldValCreate.Value = newDate;
                 File.SetCreationTime(path, newDate);
-                logMessage +="Date of create  was changed!\n";
             }
             if (oldValChange.Value.CompareTo(newValChange.Value) != 0)
             {
                 newDate = newValChange.Value;
                 oldValChange.Value = newDate;
                 File.SetLastWriteTime(path, newDate);
-                logMessage += "Date of change  was changed!\n";
             }
             if (oldValOpen.Value.CompareTo(newValOpen.Value) != 0)
             {
                 newDate = newValOpen.Value;
                 oldValOpen.Value = newDate;
                 File.SetLastAccessTime(path, newDate);
-                logMessage += "Date of open  was changed!\n";
             }
             /*
             change attributes
@@ -75,7 +71,7 @@ namespace ReData
                     File.SetAttributes(path, attributes );
                 }
             }
-            MessageBox.Show(logMessage);
+            //MessageBox.Show(@"Something change, check it :3");
         }
 
         private FileAttributes RemoveAttributesFile( FileAttributes attributes,
