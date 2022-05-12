@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace ReData
 {
     public partial class Form1 : Form
     {
-        private string path = string.Empty;
+        private string _pathOfFile = string.Empty;
         //public static string 
         public Form1()
         {
@@ -25,7 +17,6 @@ namespace ReData
         {
             string logMessage = string.Empty;
             DateTime newDate;
-            int valMode = -1;
             if (oldValCreate.Value.CompareTo(newValCreate.Value) != 0)
             {
                 newDate = newValCreate.Value;
@@ -47,14 +38,54 @@ namespace ReData
                 File.SetLastAccessTime(path, newDate);
                 logMessage += "Date of open  was changed!\n";
             }
-            //change attributes
-            
+            /*
+            change attributes
+                                        ^     ^
+            attention: spaghetti code (= U w U =)
+            */
+            FileAttributes attributes = File.GetAttributes(path);
+            if (checkBox1.Checked)
+            {
+                if ((attributes & FileAttributes.ReadOnly) != FileAttributes.ReadOnly)
+                {
+                    File.SetAttributes(path, File.GetAttributes(path) | FileAttributes.ReadOnly );
+                }
+            }
+            else
+            {
+                if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                {
+                    attributes = RemoveAttributesFile(attributes, FileAttributes.ReadOnly);
+                    File.SetAttributes(path, attributes );
+                }
+                File.SetAttributes(path, attributes);
+            }
+            if (checkBox1.Checked)
+            {
+                if ((attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
+                {
+                    File.SetAttributes(path, File.GetAttributes(path) | FileAttributes.Hidden );
+                }
+            }
+            else
+            {
+                if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                {
+                    attributes = RemoveAttributesFile(attributes, FileAttributes.Hidden);
+                    File.SetAttributes(path, attributes );
+                }
+            }
+            MessageBox.Show(logMessage);
+        }
 
+        private FileAttributes RemoveAttributesFile( FileAttributes attributes,
+            FileAttributes attributesSet)
+        {
+            return attributes & ~attributesSet;
         }
 
         private void ShowOldValues(string file)
         {
-            var ty = File.Exists(file);
             FileSystemInfo fileSystemInfo = new FileInfo(file);
             fileSystemInfo.Refresh(); 
             //show time of last CCA (CreateChangeAccess)
@@ -68,33 +99,25 @@ namespace ReData
             oldValOpen.Value = time;
             newValOpen.Value = time;
             // show attributes
-            FileAttributes attributes = File.GetAttributes(path);
-            
+            FileAttributes attributes = File.GetAttributes(_pathOfFile);
+            if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                checkBox1.Checked = true;
+            if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                checkBox2.Checked = true;
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                path = openFileDialog1.FileName;
-                textBox1.Text = path;
-                ShowOldValues(path);
+                _pathOfFile = openFileDialog1.FileName;
+                pathBox.Text = _pathOfFile;
+                ShowOldValues(_pathOfFile);
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SetNewValuesInmMetaData(path);
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-            throw new System.NotImplementedException();
+            SetNewValuesInmMetaData(_pathOfFile);
         }
     }
 }

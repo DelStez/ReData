@@ -50,7 +50,7 @@
             this.oldValCreate = new System.Windows.Forms.DateTimePicker();
             this.newValCreate = new System.Windows.Forms.DateTimePicker();
             this.button2 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.pathBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1.SuspendLayout();
@@ -133,7 +133,6 @@
             this.label8.Size = new System.Drawing.Size(244, 27);
             this.label8.TabIndex = 17;
             this.label8.Text = "Date of open";
-            this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
             // label9
             // 
@@ -161,10 +160,12 @@
             this.oldValOpen.CalendarTitleBackColor = System.Drawing.SystemColors.ButtonShadow;
             this.oldValOpen.CalendarTitleForeColor = System.Drawing.SystemColors.ActiveBorder;
             this.oldValOpen.CalendarTrailingForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.oldValOpen.Enabled = false;
             this.oldValOpen.Location = new System.Drawing.Point(267, 179);
             this.oldValOpen.Name = "oldValOpen";
             this.oldValOpen.Size = new System.Drawing.Size(245, 20);
             this.oldValOpen.TabIndex = 14;
+            this.oldValOpen.TabStop = false;
             // 
             // newValOpen
             // 
@@ -192,7 +193,6 @@
             this.label6.Size = new System.Drawing.Size(244, 27);
             this.label6.TabIndex = 11;
             this.label6.Text = "Date of create";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // label4
             // 
@@ -220,10 +220,12 @@
             this.oldValChange.CalendarTitleBackColor = System.Drawing.SystemColors.ButtonShadow;
             this.oldValChange.CalendarTitleForeColor = System.Drawing.SystemColors.ActiveBorder;
             this.oldValChange.CalendarTrailingForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.oldValChange.Enabled = false;
             this.oldValChange.Location = new System.Drawing.Point(267, 60);
             this.oldValChange.Name = "oldValChange";
             this.oldValChange.Size = new System.Drawing.Size(245, 20);
             this.oldValChange.TabIndex = 8;
+            this.oldValChange.TabStop = false;
             // 
             // newValChange
             // 
@@ -258,10 +260,12 @@
             this.oldValCreate.CalendarTitleBackColor = System.Drawing.SystemColors.ButtonShadow;
             this.oldValCreate.CalendarTitleForeColor = System.Drawing.SystemColors.ActiveBorder;
             this.oldValCreate.CalendarTrailingForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.oldValCreate.Enabled = false;
             this.oldValCreate.Location = new System.Drawing.Point(7, 60);
             this.oldValCreate.Name = "oldValCreate";
             this.oldValCreate.Size = new System.Drawing.Size(245, 20);
             this.oldValCreate.TabIndex = 4;
+            this.oldValCreate.TabStop = false;
             // 
             // newValCreate
             // 
@@ -282,16 +286,17 @@
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // textBox1
+            // pathBox
             // 
-            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (64)))), ((int) (((byte) (64)))), ((int) (((byte) (64)))));
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int) (((byte) (255)))), ((int) (((byte) (128)))), ((int) (((byte) (0)))));
-            this.textBox1.Location = new System.Drawing.Point(144, 12);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(326, 20);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "text";
+            this.pathBox.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (64)))), ((int) (((byte) (64)))), ((int) (((byte) (64)))));
+            this.pathBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pathBox.Enabled = false;
+            this.pathBox.ForeColor = System.Drawing.Color.FromArgb(((int) (((byte) (255)))), ((int) (((byte) (128)))), ((int) (((byte) (0)))));
+            this.pathBox.Location = new System.Drawing.Point(144, 12);
+            this.pathBox.Name = "pathBox";
+            this.pathBox.Size = new System.Drawing.Size(326, 20);
+            this.pathBox.TabIndex = 0;
+            this.pathBox.TabStop = false;
             // 
             // label3
             // 
@@ -311,10 +316,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (48)))), ((int) (((byte) (69)))), ((int) (((byte) (65)))));
+            this.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (36)))), ((int) (((byte) (40)))), ((int) (((byte) (53)))));
             this.ClientSize = new System.Drawing.Size(557, 326);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.pathBox);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -354,7 +359,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox pathBox;
 
         #endregion
     }
