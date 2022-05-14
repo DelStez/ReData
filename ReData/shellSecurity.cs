@@ -100,67 +100,50 @@ namespace ReData
 
         #region Regestry
 
-        private int _iRegestry(int viI, string sS, string sS1)
+        private int _iRegestry(string sS, string sS1)
         {
             sS = @"Software\" + sS + @"\" + sS1;
             Microsoft.Win32.RegistryKey clRegistryKey;
-            if (viI == 0)
+            clRegistryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(sS);
+            if (clRegistryKey == null)
             {
-                clRegistryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(sS);
-                if (clRegistryKey == null)
-                {
-                    clRegistryKey = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(sS);
-                }
+                clRegistryKey = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(sS);
             }
             else
             {
-                clRegistryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(sS, true);
+                clRegistryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(sS);
             }
-            //К этому времени раздел должен быть
-            if (clRegistryKey != null)
+            string[] sKeyNames = clRegistryKey.GetValueNames();
+            if (sKeyNames.Length != 0)
+            {  
+                var temp =clRegistryKey.GetValue("isFirstStart");
+                if (temp.Equals(true))
+                {
+                    clRegistryKey.SetValue("isFirstStart", false);
+                    
+                }
+                clRegistryKey.Close();
+                return 0;
+            }
+            else
             {
-                if (viI == 0)
-                {
-                    //Есть ли параметры в разделе
-                    string[] sKeyNames = clRegistryKey.GetValueNames();
-                    if (sKeyNames.Length != 0)
-                    {  
-                        var temp =clRegistryKey.GetValue("isFirstStart");
-                        clRegistryKey.Close();
-                        return 0;
-                    }
-                    else
-                    {
-                        clRegistryKey.SetValue("isFirstStart", false);
-                        clRegistryKey.Close();
-                        return 0;
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        clRegistryKey.SetValue("isFirstStart", false);
-                        clRegistryKey.Close();
-                    }
-                    catch (Exception)
-                    {
-                        //Ошибка работы с реестром
-                        return 1;
-
-                    } //try catch
-
-                    return 0;
-                }
+                clRegistryKey.SetValue("isFirstStart", true);
+                clRegistryKey.Close();
+                return 1;
             }
-            return 1;
         }
-
-
         #endregion
         public shellSecurity()
         {
-            
+            if (_iRegestry("ReData", "ffff")==1)
+            {
+                using (StreamWriter wr = new StreamWriter("config.conf"))
+                {
+                    byte[] newStart = Encoding.UTF8.GetBytes(Convert.ToString(10));
+                    string newline = Encoding.UTF8.GetString(Encrypt(newStart, false));
+                    wr.WriteLine(newline);
+                }
+            }
             string line = "";
             StreamReader sr = new StreamReader("config.conf");
             while (!sr.EndOfStream)
@@ -170,12 +153,10 @@ namespace ReData
             {
                 MessageBox.Show("хаха");
             }
-
         }
-
         private bool IsFirstStart()
         {
-            
+            return false;
         }
 
         private bool getInfo(string line)
