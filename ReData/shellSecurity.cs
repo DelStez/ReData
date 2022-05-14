@@ -3,99 +3,58 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Security.Cryptography;
 
 namespace ReData
 {
     public class shellSecurity
     {
         #region hideInfo
-
-        // lucipher code
-        private static int[] PblockChanges = { 0, 8, 13, 5, 9, 1, 15, 4, 3, 12, 2, 14, 7, 6, 10, 11 };
-        public static BitArray[] InputSbox = new BitArray[] {
-            new BitArray(new bool[3] { false, false, false }),
-            new BitArray(new bool[3] { false, false, true }),
-            new BitArray(new bool[3] { false, true, false }),
-            new BitArray(new bool[3] { false, true, true }),
-            new BitArray(new bool[3] { true, false, false }),
-            new BitArray(new bool[3] { true, false, true }),
-            new BitArray(new bool[3] { true, true, false }),
-            new BitArray(new bool[3] { true, true, true }),
-        };
-        public static BitArray[] OutputSbox = new BitArray[] {
-            new BitArray(new bool[3] { false, true, true }),
-            new BitArray(new bool[3] { true, true, true }),
-            new BitArray(new bool[3] { false, false, false }),
-            new BitArray(new bool[3] { true, true, false }),
-            new BitArray(new bool[3] { false, true, false }),
-            new BitArray(new bool[3] { true, false, false }),
-            new BitArray(new bool[3] { true, false, true }),
-            new BitArray(new bool[3] { false, false, true }),
-        };
-         private static bool[] Pbox(BitArray mess, int[] PblockChanges, bool reverse)
+        public static byte[] CipherMode(byte[] message, byte[] key)
         {
-            bool[] res = new bool[mess.Length];
-            for (int i = 0; i < mess.Length; i++)
+            byte[] output = new byte[message.Length];// выходное сообщение 
+            byte[] temp = new byte[2];//для хранения двух субблоков
+            for (int i = 0; i < message.Length-1; i++)
             {
-                if (!reverse)
-                {
-                    res[PblockChanges[i]] = mess[i];
-                }
-                else
-                {
-                    res[i] = mess[PblockChanges[i]];
-                }
+                temp[0] = message[i]; temp[1] = message[i+1];
+                temp = Feistel(temp, key);
+                output[i] = temp[0]; output[i+1] = temp[1];
             }
-            return res;
-
+            return output;
         }
-        private static bool Check(BitArray temp, BitArray input)
+        public static byte[] Feistel(byte[] data, byte[] key) // Фейстель
         {
-            for (int i = 0; i < temp.Length; i++)
+            int countRound = key.Length - 1;// кол-во раундов
+            int keyIndexRound = 0; // индекс раундового ключа
+            byte Left = data[0], Right = data[1]; // делим субблок на правую и левую часть
+            for (int i = 0; i < countRound; i++)
             {
-                if (temp[i] != input[i])
-                    return false;
-            }
-            return true;
-        }
-        private static bool[] Sbox(BitArray mess, bool reverse)
-        {
-            bool[] res = new bool[mess.Length];
-            res[0] = mess[0]; 
-            for (int i = 1; i < mess.Length-1; i+=3)
-            {
-                BitArray temp = new BitArray(new bool[3] { mess[i], mess[i+1], mess[i + 2] });
-                for (int j = 0; j < InputSbox.Length; j++)
+                if (i < countRound - 1) // если i не последний элемент 
                 {
-                    if (Check(temp, reverse? OutputSbox[j]:InputSbox[j]))
-                    {
-                        temp = reverse ? OutputSbox[j]: InputSbox[j];
-                        break;
-                    }
+                    byte temp = Left;
+                    Left = Convert.ToByte(Right ^ F(Left, key[keyIndexRound]));
+                    Right = temp;
 
                 }
-                temp.CopyTo(res, i);
+                keyIndexRound++;
             }
-            return res;
+            data[0] = Left;
+            data[1] = Right;
+            return data;
         }
-        
-        private static byte[] Encrypt(byte[] byteMessage, bool reverse)
+        private static byte F(byte A, byte B)// функция F 
         {
-            byte[] result = new byte[byteMessage.Length];
-            for (int i = 0; i < byteMessage.Length - 1; i+=2)
-            {   
-                BitArray mess = new BitArray(new byte[2] {byteMessage[i], byteMessage[i + 1] });
-                for (int j = 0; j < 6; j++)
-                {
-                    mess = new BitArray(Pbox(mess, PblockChanges, reverse));
-                    mess = new BitArray(Sbox(mess, reverse));
-                }
-                mess = new BitArray(Pbox(mess, PblockChanges, reverse));
-                mess.CopyTo(result, i); 
-            }
+            BitArray Abit = new BitArray(new byte[] { A });
+            BitArray Bbit = new BitArray(new byte[] { B });
+            byte result = ConvertToByte(Abit.Xor(Bbit));
             return result;
         }
-        
+        private static byte ConvertToByte(BitArray fBits)//функция перевода бит в байт
+        {
+            byte[] _byte = new byte[1];
+            fBits.CopyTo(_byte, 0);
+            return _byte[0];
+        }
         #endregion
 
         #region Regestry
@@ -133,23 +92,23 @@ namespace ReData
             }
         }
         #endregion
-        public shellSecurity()
+        public shellSecurity(byte[] key, byte[] v)
         {
             if (_iRegestry("ReData", "ffff")==1)
             {
-                using (StreamWriter wr = new StreamWriter("config.conf"))
+                using (StreamWriter wr = new StreamWriter("config.conf", false,Encoding.UTF8))
                 {
-                    byte[] newStart = Encoding.UTF8.GetBytes(Convert.ToString(10));
-                    string newline = Encoding.UTF8.GetString(Encrypt(newStart, false));
+                    byte[] mess = Encoding.UTF8.GetBytes("10");
+                    string newline = Encoding.UTF8.GetString(CipherMode(mess, key));
                     wr.WriteLine(newline);
                 }
             }
-            string line = "";
-            StreamReader sr = new StreamReader("config.conf");
+            string line ="";
+            StreamReader sr = new StreamReader("config.conf",Encoding.UTF8);
             while (!sr.EndOfStream)
                 line += sr.ReadLine();
             sr.Close();
-            if (!getInfo(line))
+            if (!getInfo(line, key, v))
             {
                 MessageBox.Show("хаха");
             }
@@ -159,13 +118,13 @@ namespace ReData
             return false;
         }
 
-        private bool getInfo(string line)
+        private bool getInfo(string line, byte[] key, byte[] v)
         {
             bool answer = true;
-            int count = Decoder(line);
-            if (count < 10)
+            int count = Decoder(line,key, v);
+            if (count != 0)
             {
-                count++;
+                count--;
             }
             else
             {
@@ -175,19 +134,20 @@ namespace ReData
             }
             using (StreamWriter sr = new StreamWriter("config.conf"))
             {
-                byte[] newStart = Encoding.UTF8.GetBytes(Convert.ToString(count));
-                string newline = Encoding.UTF8.GetString(Encrypt(newStart, false));
+                byte[] mess = Encoding.Unicode.GetBytes(Convert.ToString(count));
+                string newline = Encoding.UTF8.GetString(CipherMode(mess, key));
                 sr.WriteLine(newline);
             }
 
             return answer;
         }
 
-        private int Decoder(string line)
+        private int Decoder(string line, byte[] key, byte[] v)
         {
             byte[] mess = Encoding.UTF8.GetBytes(line);
-            int result = Convert.ToInt32(Encoding.UTF8.GetString(Encrypt(mess, true)));
-            return result;
+            //byte[] t = Encrypt(mess, true);
+            string result = Encoding.UTF8.GetString(CipherMode(mess, key));
+            return Convert.ToInt32(result);
         }
     }
 }
