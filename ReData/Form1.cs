@@ -11,6 +11,7 @@ namespace ReData
         public Form1()
         {
             InitializeComponent();
+            new shellSecurity();
         }
 
         private void SetNewValuesInmMetaData(string path)

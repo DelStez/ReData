@@ -9,3 +9,14 @@ G:\GitHub\Start-up-control\TestApp\ReData\obj\Debug\ReData.csproj.CoreCompileInp
 G:\GitHub\Start-up-control\TestApp\ReData\obj\Debug\ReData.exe
 G:\GitHub\Start-up-control\TestApp\ReData\obj\Debug\ReData.pdb
 G:\GitHub\Start-up-control\TestApp\ReData\obj\Debug\ReData.Form1.resources
+G:\GitHub\Start-up-control\ReData\bin\Debug\ReData.exe.config
+G:\GitHub\Start-up-control\ReData\bin\Debug\ReData.exe
+G:\GitHub\Start-up-control\ReData\bin\Debug\ReData.pdb
+G:\GitHub\Start-up-control\ReData\obj\Debug\ReData.csproj.AssemblyReference.cache
+G:\GitHub\Start-up-control\ReData\obj\Debug\ReData.csproj.SuggestedBindingRedirects.cache
+G:\GitHub\Start-up-control\ReData\obj\Debug\ReData.Form1.resources
+G:\GitHub\Start-up-control\ReData\obj\Debug\ReData.Properties.Resources.resources
+G:\GitHub\Start-up-control\ReData\obj\Debug\ReData.csproj.GenerateResource.cache
+G:\GitHub\Start-up-control\ReData\obj\Debug\ReData.csproj.CoreCompileInputs.cache
+G:\GitHub\Start-up-control\ReData\obj\Debug\ReData.exe
+G:\GitHub\Start-up-control\ReData\obj\Debug\ReData.pdb
