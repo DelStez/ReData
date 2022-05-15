@@ -1,0 +1,12 @@
+G:\GitHub\Start-up-control\ReData\bin\Release\ReData.exe.config
+G:\GitHub\Start-up-control\ReData\bin\Release\ReData.exe
+G:\GitHub\Start-up-control\ReData\bin\Release\ReData.pdb
+G:\GitHub\Start-up-control\ReData\obj\Release\ReData.csproj.AssemblyReference.cache
+G:\GitHub\Start-up-control\ReData\obj\Release\ReData.csproj.SuggestedBindingRedirects.cache
+G:\GitHub\Start-up-control\ReData\obj\Release\ReData.EnterCode.resources
+G:\GitHub\Start-up-control\ReData\obj\Release\ReData.Form1.resources
+G:\GitHub\Start-up-control\ReData\obj\Release\ReData.Properties.Resources.resources
+G:\GitHub\Start-up-control\ReData\obj\Release\ReData.csproj.GenerateResource.cache
+G:\GitHub\Start-up-control\ReData\obj\Release\ReData.csproj.CoreCompileInputs.cache
+G:\GitHub\Start-up-control\ReData\obj\Release\ReData.exe
+G:\GitHub\Start-up-control\ReData\obj\Release\ReData.pdb

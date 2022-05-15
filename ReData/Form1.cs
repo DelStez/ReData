@@ -1,18 +1,62 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.IO;
+using System.Text;
 
 namespace ReData
 {
     public partial class Form1 : Form
     {
         private string _pathOfFile = string.Empty;
+        public string key = String.Empty;
+        internal bool _closed = false;
         //public static string 
         public Form1()
         {
             InitializeComponent();
-            new shellSecurity(new byte[]{ 24, 56, 64, 63, 24, 56, 24, 25},
-                new byte[]{ 24, 56, 24, 53, 64, 56, 24, 63,53, 64, 56, 24, 53, 64, 56, 24,});
+            EnterCode entered = new EnterCode();
+            entered.Owner = this;
+            entered.ShowDialog();
+            if (!_closed)
+            {
+                if (key != "")
+                {
+                    byte[] str = Encoding.UTF8.GetBytes(key);
+                    if (shellSecurity.ShellSecurityCipher(str) == false)
+                    {
+                        //trash
+                        int key = 0;
+                        byte[] subkey = new byte[8];
+                        for (int k = 0; k < subkey.Length; k++)
+                        {
+                            if ( key==0 && subkey.Length > k++)
+                            {
+                                key++;
+                            }
+                            else
+                            {
+                                OpenConfig(subkey);
+                                break;
+                            }
+                        }
+                        _closed = true;
+                    }
+                }
+                else
+                {
+                    _closed = true;
+                }
+            }
+        }
+
+        private int OpenConfig(byte[] subkey)
+        {
+            if (subkey.Length > 0)
+            {
+                return -1;
+            }
+
+            return 256;
         }
 
         private void SetNewValuesInmMetaData(string path)
@@ -116,6 +160,14 @@ namespace ReData
         private void button2_Click(object sender, EventArgs e)
         {
             SetNewValuesInmMetaData(_pathOfFile);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            if (_closed)
+            {
+                this.Close();
+            }
         }
     }
 }

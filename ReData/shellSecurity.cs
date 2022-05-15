@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Security.Cryptography;
+using static System.Windows.Forms.MessageBoxOptions;
 
 namespace ReData
 {
@@ -55,11 +56,28 @@ namespace ReData
             fBits.CopyTo(_byte, 0);
             return _byte[0];
         }
+        private static int Decoder(string line, byte[] key)
+        {
+            
+            byte[] mess = Encoding.UTF8.GetBytes(line);
+            string result = Encoding.UTF8.GetString(CipherMode(mess, key));
+            try
+            {
+                Convert.ToInt32(result);
+            }
+            catch(FormatException)
+            {
+                MessageBox.Show(@"Файл конфигурации был изменен", "٩(ఠ益ఠ)۶",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return -1;
+            }
+            return Convert.ToInt32(result);;
+        }
         #endregion
 
         #region Regestry
 
-        private int _iRegestry(string sS, string sS1)
+        private static int _iRegestry(string sS, string sS1)
         {
             sS = @"Software\" + sS + @"\" + sS1;
             Microsoft.Win32.RegistryKey clRegistryKey;
@@ -92,45 +110,59 @@ namespace ReData
             }
         }
         #endregion
-        public shellSecurity(byte[] key, byte[] v)
+        public static bool ShellSecurityCipher(byte[] key)
         {
             if (_iRegestry("ReData", "ffff")==1)
             {
-                using (StreamWriter wr = new StreamWriter("config.conf", false,Encoding.UTF8))
+                if (!File.Exists("config.conf"))
                 {
-                    byte[] mess = Encoding.UTF8.GetBytes("10");
-                    string newline = Encoding.UTF8.GetString(CipherMode(mess, key));
-                    wr.WriteLine(newline);
+                    using (StreamWriter wr = new StreamWriter("config.conf", false,Encoding.UTF8))
+                    {
+                        byte[] mess = Encoding.UTF8.GetBytes("10");
+                        string newline = Encoding.UTF8.GetString(CipherMode(mess, key));
+                        wr.WriteLine(newline);
+                    }
                 }
             }
-            string line ="";
-            StreamReader sr = new StreamReader("config.conf",Encoding.UTF8);
-            while (!sr.EndOfStream)
-                line += sr.ReadLine();
-            sr.Close();
-            if (!getInfo(line, key, v))
+            if (File.Exists("config.conf"))
             {
-                MessageBox.Show("хаха");
+                string line ="";
+                StreamReader sr = new StreamReader("config.conf",Encoding.UTF8);
+                while (!sr.EndOfStream)
+                    line += sr.ReadLine();
+                sr.Close();
+                if (!getInfo(line, key))
+                {
+                    return false;
+                }
             }
-        }
-        private bool IsFirstStart()
-        {
-            return false;
+            else
+            {
+                MessageBox.Show(@"Файл конфигурации не найден или был удален.", "Ой-ёй (×﹏×)",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+            return true;
         }
 
-        private bool getInfo(string line, byte[] key, byte[] v)
+        private static bool getInfo(string line, byte[] key)
         {
             bool answer = true;
-            int count = Decoder(line,key, v);
+            int count = Decoder(line,key);
             if (count != 0)
             {
                 count--;
+                if (count < 0)
+                {
+                    return false;
+                }
             }
             else
             {
                 MessageBox.Show("Использование программы прекращенно",
                     caption:"Ошибка",MessageBoxButtons.OK, MessageBoxIcon.Error);
                 answer = false;
+                return answer;
             }
             using (StreamWriter sr = new StreamWriter("config.conf"))
             {
@@ -138,16 +170,7 @@ namespace ReData
                 string newline = Encoding.UTF8.GetString(CipherMode(mess, key));
                 sr.WriteLine(newline);
             }
-
             return answer;
-        }
-
-        private int Decoder(string line, byte[] key, byte[] v)
-        {
-            byte[] mess = Encoding.UTF8.GetBytes(line);
-            //byte[] t = Encrypt(mess, true);
-            string result = Encoding.UTF8.GetString(CipherMode(mess, key));
-            return Convert.ToInt32(result);
         }
     }
 }
