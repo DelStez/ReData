@@ -7,10 +7,11 @@ Program for laboratory work on "Software and Hardware Methods and Means of Infor
 
 ![image](https://user-images.githubusercontent.com/50168261/168461349-aafb405e-fe68-44e4-9320-be3875c47b4e.png)
  
-Загрузится главная форма, если код верен. Иначе сообщит об ошибке конфигурационного файла.
-Главная форма
+Загрузится главная форма, если ключ верен, иначе сообщит об ошибке конфигурационного файла.
 
 ![image](https://user-images.githubusercontent.com/50168261/168173984-cb3c8ed3-757d-4028-827f-ae56a33fc75e.png)
+<p style="text-align:center"> <i>Главная форма приложения</i></p>
+
 
 Ошибка может проявляться если:
 Файл конфигурации был подменен, и ключи шифрования не совпадают.
